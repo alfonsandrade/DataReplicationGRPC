@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package replicator;
+
+message DataUpdate {
+    string key = 1;
+    string value = 2;
+}
+
+message Ack {
+    bool success = 1;
+    string message = 2;
+}
+
+service ReplicationService {
+    rpc PushUpdate (DataUpdate) returns (Ack);
+}
