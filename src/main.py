@@ -2,48 +2,38 @@ import subprocess
 import platform
 import os
 import sys
+import time
 
-def run_script_in_current_terminal(script):
-    subprocess.run([sys.executable, script])
+import global_vars as gv
 
-def run_script_in_new_terminal(script):
+def run_script_in_new_terminal(script, args=[]):
     system = platform.system()
+    command = [sys.executable, script] + args
 
     if system == "Windows":
-        # Use cmd.exe to open a new window and run the script
-        subprocess.Popen(["start", "cmd", "/k", f"{sys.executable} {script}"], shell=True)
-
+        subprocess.Popen(["start", "cmd", "/k"] + command, shell=True)
     elif system == "Linux":
-        # Linux is the only operating system that has a variety of terminal emulators
-        terminal_cmds = [
-            ["gnome-terminal", "--", sys.executable, script],
-            ["x-terminal-emulator", "-e", f"{sys.executable} {script}"],
-            ["xterm", "-e", f"{sys.executable} {script}"],
-            ["konsole", "-e", sys.executable, script]
-        ]
-        for cmd in terminal_cmds:
+        try:
+            subprocess.Popen(["x-terminal-emulator", "-e"] + command)
+        except FileNotFoundError:
             try:
-                subprocess.Popen(cmd)
-                break
+                subprocess.Popen(["gnome-terminal", "--"] + command)
             except FileNotFoundError:
-                continue
-        else:
-            print("⚠️ No compatible terminal emulator found.")
-
-    elif system == "Darwin":  # macOS
-        # Use AppleScript to open Terminal and run the script
-        subprocess.Popen([
-            "osascript", "-e",
-            f'tell application "Terminal" to do script "{sys.executable} {os.path.abspath(script)}"'
-        ])
-
+                print("Could not find a compatible terminal emulator.")
+    elif system == "Darwin":
+        subprocess.Popen(["open", "-a", "Terminal", os.path.abspath(script)] + args)
     else:
         print(f"Unsupported platform: {system}")
 
-'''
-Runs the name server and the test script in separate terminals.
-'''
 if __name__ == "__main__":
-    run_script_in_new_terminal("./replica.py")
-    run_script_in_new_terminal("./server.py")
-    run_script_in_new_terminal("./client.py")
+    # Start the leader
+    run_script_in_new_terminal("leader.py")
+    time.sleep(1)
+
+    # Start the replicas
+    for port in gv.REPLICA_PORTS:
+        run_script_in_new_terminal("replica.py", [str(port)])
+        time.sleep(0.5)
+
+    # Start the client
+    run_script_in_new_terminal("client.py")

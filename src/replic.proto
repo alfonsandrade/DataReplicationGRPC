@@ -2,16 +2,59 @@ syntax = "proto3";
 
 package replicator;
 
-message DataUpdate {
+// For client-leader communication
+message WriteRequest {
     string key = 1;
     string value = 2;
 }
 
-message Ack {
+message WriteResponse {
     bool success = 1;
     string message = 2;
 }
 
+message QueryRequest {
+    string key = 1;
+}
+
+message QueryResponse {
+    string value = 1;
+    bool found = 2;
+}
+
+// For leader-replica communication
+message LogEntry {
+    int64 epoch = 1;
+    int64 offset = 2;
+    string key = 3;
+    string value = 4;
+}
+
+message AppendEntriesRequest {
+    int64 leader_epoch = 1;
+    int64 prev_log_offset = 2;
+    LogEntry entry = 3;
+}
+
+message AppendEntriesResponse {
+    bool success = 1;
+    int64 current_offset = 2;
+}
+
+message CommitRequest {
+    int64 offset = 1;
+}
+
+message CommitResponse {
+    bool success = 1;
+}
+
+service ClientService {
+    rpc Write(WriteRequest) returns (WriteResponse);
+    rpc Query(QueryRequest) returns (QueryResponse);
+}
+
 service ReplicationService {
-    rpc PushUpdate (DataUpdate) returns (Ack);
+    rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesResponse);
+    rpc CommitEntry(CommitRequest) returns (CommitResponse);
 }

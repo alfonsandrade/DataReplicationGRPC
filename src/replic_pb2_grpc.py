@@ -25,6 +25,121 @@ if _version_not_supported:
     )
 
 
+class ClientServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.Write = channel.unary_unary(
+                '/replicator.ClientService/Write',
+                request_serializer=replic__pb2.WriteRequest.SerializeToString,
+                response_deserializer=replic__pb2.WriteResponse.FromString,
+                _registered_method=True)
+        self.Query = channel.unary_unary(
+                '/replicator.ClientService/Query',
+                request_serializer=replic__pb2.QueryRequest.SerializeToString,
+                response_deserializer=replic__pb2.QueryResponse.FromString,
+                _registered_method=True)
+
+
+class ClientServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def Write(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Query(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_ClientServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'Write': grpc.unary_unary_rpc_method_handler(
+                    servicer.Write,
+                    request_deserializer=replic__pb2.WriteRequest.FromString,
+                    response_serializer=replic__pb2.WriteResponse.SerializeToString,
+            ),
+            'Query': grpc.unary_unary_rpc_method_handler(
+                    servicer.Query,
+                    request_deserializer=replic__pb2.QueryRequest.FromString,
+                    response_serializer=replic__pb2.QueryResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'replicator.ClientService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('replicator.ClientService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class ClientService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def Write(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/replicator.ClientService/Write',
+            replic__pb2.WriteRequest.SerializeToString,
+            replic__pb2.WriteResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Query(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/replicator.ClientService/Query',
+            replic__pb2.QueryRequest.SerializeToString,
+            replic__pb2.QueryResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
 class ReplicationServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
@@ -34,17 +149,28 @@ class ReplicationServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.PushUpdate = channel.unary_unary(
-                '/replicator.ReplicationService/PushUpdate',
-                request_serializer=replic__pb2.DataUpdate.SerializeToString,
-                response_deserializer=replic__pb2.Ack.FromString,
+        self.AppendEntries = channel.unary_unary(
+                '/replicator.ReplicationService/AppendEntries',
+                request_serializer=replic__pb2.AppendEntriesRequest.SerializeToString,
+                response_deserializer=replic__pb2.AppendEntriesResponse.FromString,
+                _registered_method=True)
+        self.CommitEntry = channel.unary_unary(
+                '/replicator.ReplicationService/CommitEntry',
+                request_serializer=replic__pb2.CommitRequest.SerializeToString,
+                response_deserializer=replic__pb2.CommitResponse.FromString,
                 _registered_method=True)
 
 
 class ReplicationServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def PushUpdate(self, request, context):
+    def AppendEntries(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CommitEntry(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -53,10 +179,15 @@ class ReplicationServiceServicer(object):
 
 def add_ReplicationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'PushUpdate': grpc.unary_unary_rpc_method_handler(
-                    servicer.PushUpdate,
-                    request_deserializer=replic__pb2.DataUpdate.FromString,
-                    response_serializer=replic__pb2.Ack.SerializeToString,
+            'AppendEntries': grpc.unary_unary_rpc_method_handler(
+                    servicer.AppendEntries,
+                    request_deserializer=replic__pb2.AppendEntriesRequest.FromString,
+                    response_serializer=replic__pb2.AppendEntriesResponse.SerializeToString,
+            ),
+            'CommitEntry': grpc.unary_unary_rpc_method_handler(
+                    servicer.CommitEntry,
+                    request_deserializer=replic__pb2.CommitRequest.FromString,
+                    response_serializer=replic__pb2.CommitResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -70,7 +201,7 @@ class ReplicationService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def PushUpdate(request,
+    def AppendEntries(request,
             target,
             options=(),
             channel_credentials=None,
@@ -83,9 +214,36 @@ class ReplicationService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/replicator.ReplicationService/PushUpdate',
-            replic__pb2.DataUpdate.SerializeToString,
-            replic__pb2.Ack.FromString,
+            '/replicator.ReplicationService/AppendEntries',
+            replic__pb2.AppendEntriesRequest.SerializeToString,
+            replic__pb2.AppendEntriesResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CommitEntry(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/replicator.ReplicationService/CommitEntry',
+            replic__pb2.CommitRequest.SerializeToString,
+            replic__pb2.CommitResponse.FromString,
             options,
             channel_credentials,
             insecure,
