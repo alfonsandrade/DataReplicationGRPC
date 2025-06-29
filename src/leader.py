@@ -23,7 +23,7 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
                 self.log = json.load(f)
                 if self.log:
                     self.offset = self.log[-1]['offset']
-                    self.epoch = self.log[-1]['epoch']
+                    self.epoch = self.log[-1]['epoch'] + 1
             with open(f"../databank/leader_db.json", "r") as f:
                 self.db = json.load(f)
         except FileNotFoundError:
@@ -66,7 +66,6 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
         return 1
 
     def Write(self, request, context):
-        print(type(request.testError), request.testError)
         with self.lock:
             self.offset += 1
             entry = {
