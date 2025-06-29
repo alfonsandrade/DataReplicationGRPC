@@ -6,6 +6,7 @@ package replicator;
 message WriteRequest {
     string key = 1;
     string value = 2;
+    string testError = 3;
 }
 
 message WriteResponse {

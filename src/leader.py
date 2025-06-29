@@ -66,6 +66,7 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
         return 1
 
     def Write(self, request, context):
+        print(type(request.testError), request.testError)
         with self.lock:
             self.offset += 1
             entry = {
@@ -77,15 +78,39 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
             self.log.append(entry)
             self.save_log()
 
+            prev_offset_to_send = self.offset - 1
+            epoch_to_send = self.epoch
+            replica_to_ignore_address = 0
+            if request.testError != "0":
+                if request.testError == "offsetError":
+                    if self.offset > 1:
+                        self.offset -= 2
+                        prev_offset_to_send = self.offset - 1
+                        self.log.pop()
+                        self.log.pop()
+                        self.db.pop()
+                        self.db.pop()
+                        self.save_log()
+                        self.save_db()
+                        entry = self.log[-1] if self.log else None
+                elif request.testError == "epochError":
+                    epoch_to_send = self.epoch - 1 if self.epoch > 0 else 0
+                elif "replicaIgnore_" in request.testError:
+                    replica_to_ignore = int(request.testError.split("_")[-1])
+                    if replica_to_ignore < len(gv.REPLICA_ADDRESSES):
+                        replica_to_ignore_address = gv.REPLICA_ADDRESSES[replica_to_ignore]
+
             acks = 0
             for replica_address in gv.REPLICA_ADDRESSES:
+                if replica_address == replica_to_ignore_address:
+                    continue
                 try:
                     with grpc.insecure_channel(replica_address) as channel:
                         stub = replic_pb2_grpc.ReplicationServiceStub(channel)
                         response = stub.AppendEntries(
                                                     replic_pb2.AppendEntriesRequest(
-                                                        leader_epoch=self.epoch,
-                                                        prev_log_offset=self.offset - 1,
+                                                        leader_epoch=epoch_to_send,
+                                                        prev_log_offset=prev_offset_to_send,
                                                         entry=replic_pb2.LogEntry(
                                                             epoch=entry['epoch'],
                                                             offset=entry['offset'],
@@ -114,6 +139,9 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
                 self.save_db()
                 return replic_pb2.WriteResponse(success=True, message="Data committed.")
             else:
+                self.offset -= 1
+                self.log.pop()
+                self.save_log()
                 return replic_pb2.WriteResponse(success=False, message="Failed to get quorum.")
 
     def Query(self, request, context):

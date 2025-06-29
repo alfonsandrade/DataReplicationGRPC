@@ -40,7 +40,9 @@ class Replica(replic_pb2_grpc.ReplicationServiceServicer):
 
         if self.log and self.log[-1]['offset'] != request.prev_log_offset:
             self.log = [entry for entry in self.log if entry['offset'] <= request.prev_log_offset]
+            self.db = [entry for entry in self.db if entry['offset'] < request.prev_log_offset]
             self.save_log()
+            self.save_db()
             print(f"AppendEntries: Log truncated to offset {request.prev_log_offset}")
             return replic_pb2.AppendEntriesResponse(success=False,
                                                     current_offset=self.log[-1]['offset'] if self.log else 0,
