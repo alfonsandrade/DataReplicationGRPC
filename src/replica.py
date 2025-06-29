@@ -11,18 +11,15 @@ class Replica(replic_pb2_grpc.ReplicationServiceServicer):
     def __init__(self, port):
         self.port = port
         self.log = []
-        self.committed_offset = 0
         self.db = []
-        self.load_state()
+        self.load_files_locally()
 
-    def load_state(self):
+    def load_files_locally(self):
         try:
             with open(f"../databank/replica_{self.port}_log.json", "r") as f:
                 self.log = json.load(f)
             with open(f"../databank/replica_{self.port}_db.json", "r") as f:
                 self.db = json.load(f)
-                if self.log:
-                    self.committed_offset = self.log[-1]['offset']
         except FileNotFoundError:
             pass
 
@@ -36,13 +33,16 @@ class Replica(replic_pb2_grpc.ReplicationServiceServicer):
 
     def AppendEntries(self, request, context):
         if request.leader_epoch < self.log[-1]['epoch'] if self.log else 0:
-            return replic_pb2.AppendEntriesResponse(success=False, current_offset=self.log[-1]['offset'] if self.log else 0)
+            return replic_pb2.AppendEntriesResponse(success=False,
+                                                    current_offset=self.log[-1]['offset'] if self.log else 0,
+                                                    current_epoch=self.log[-1]['epoch'] if self.log else 0)
 
         if self.log and self.log[-1]['offset'] != request.prev_log_offset:
-            # Inconsistent log, truncate
-            self.log = [entry for entry in self.log if entry['offset'] < request.prev_log_offset]
+            self.log = [entry for entry in self.log if entry['offset'] <= request.prev_log_offset]
             self.save_log()
-            return replic_pb2.AppendEntriesResponse(success=False, current_offset=self.log[-1]['offset'] if self.log else 0)
+            return replic_pb2.AppendEntriesResponse(success=False,
+                                                    current_offset=self.log[-1]['offset'] if self.log else 0,
+                                                    current_epoch=self.log[-1]['epoch'] if self.log else 0)
 
         entry = {
             'epoch': request.entry.epoch,
@@ -52,11 +52,13 @@ class Replica(replic_pb2_grpc.ReplicationServiceServicer):
         }
         self.log.append(entry)
         self.save_log()
-        return replic_pb2.AppendEntriesResponse(success=True, current_offset=entry['offset'])
+        return replic_pb2.AppendEntriesResponse(success=True,
+                                                current_offset=entry['offset'],
+                                                current_epoch=entry['epoch'])
 
     def CommitEntry(self, request, context):
         for entry in self.log:
-            if entry['offset'] <= request.offset and entry['offset'] > self.committed_offset:
+            if entry['offset'] <= request.offset and entry['offset'] > self.db[-1]['offset'] if self.db else 0:
                 self.db.append(entry)
         self.save_db()
         return replic_pb2.CommitResponse(success=True)

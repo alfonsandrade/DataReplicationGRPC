@@ -39,6 +39,7 @@ message AppendEntriesRequest {
 message AppendEntriesResponse {
     bool success = 1;
     int64 current_offset = 2;
+    int64 current_epoch = 3;
 }
 
 message CommitRequest {

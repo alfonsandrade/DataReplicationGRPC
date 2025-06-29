@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creplic.proto\x12\nreplicator\"*\n\x0cWriteRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"1\n\rWriteResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1b\n\x0cQueryRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\"-\n\rQueryResponse\x12\r\n\x05value\x18\x01 \x01(\t\x12\r\n\x05\x66ound\x18\x02 \x01(\x08\"E\n\x08LogEntry\x12\r\n\x05\x65poch\x18\x01 \x01(\x03\x12\x0e\n\x06offset\x18\x02 \x01(\x03\x12\x0b\n\x03key\x18\x03 \x01(\t\x12\r\n\x05value\x18\x04 \x01(\t\"j\n\x14\x41ppendEntriesRequest\x12\x14\n\x0cleader_epoch\x18\x01 \x01(\x03\x12\x17\n\x0fprev_log_offset\x18\x02 \x01(\x03\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.replicator.LogEntry\"@\n\x15\x41ppendEntriesResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x16\n\x0e\x63urrent_offset\x18\x02 \x01(\x03\"\x1f\n\rCommitRequest\x12\x0e\n\x06offset\x18\x01 \x01(\x03\"!\n\x0e\x43ommitResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x8b\x01\n\rClientService\x12<\n\x05Write\x12\x18.replicator.WriteRequest\x1a\x19.replicator.WriteResponse\x12<\n\x05Query\x12\x18.replicator.QueryRequest\x1a\x19.replicator.QueryResponse2\xb0\x01\n\x12ReplicationService\x12T\n\rAppendEntries\x12 .replicator.AppendEntriesRequest\x1a!.replicator.AppendEntriesResponse\x12\x44\n\x0b\x43ommitEntry\x12\x19.replicator.CommitRequest\x1a\x1a.replicator.CommitResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creplic.proto\x12\nreplicator\"*\n\x0cWriteRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"1\n\rWriteResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1b\n\x0cQueryRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\"-\n\rQueryResponse\x12\r\n\x05value\x18\x01 \x01(\t\x12\r\n\x05\x66ound\x18\x02 \x01(\x08\"E\n\x08LogEntry\x12\r\n\x05\x65poch\x18\x01 \x01(\x03\x12\x0e\n\x06offset\x18\x02 \x01(\x03\x12\x0b\n\x03key\x18\x03 \x01(\t\x12\r\n\x05value\x18\x04 \x01(\t\"j\n\x14\x41ppendEntriesRequest\x12\x14\n\x0cleader_epoch\x18\x01 \x01(\x03\x12\x17\n\x0fprev_log_offset\x18\x02 \x01(\x03\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.replicator.LogEntry\"W\n\x15\x41ppendEntriesResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x16\n\x0e\x63urrent_offset\x18\x02 \x01(\x03\x12\x15\n\rcurrent_epoch\x18\x03 \x01(\x03\"\x1f\n\rCommitRequest\x12\x0e\n\x06offset\x18\x01 \x01(\x03\"!\n\x0e\x43ommitResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x8b\x01\n\rClientService\x12<\n\x05Write\x12\x18.replicator.WriteRequest\x1a\x19.replicator.WriteResponse\x12<\n\x05Query\x12\x18.replicator.QueryRequest\x1a\x19.replicator.QueryResponse2\xb0\x01\n\x12ReplicationService\x12T\n\rAppendEntries\x12 .replicator.AppendEntriesRequest\x1a!.replicator.AppendEntriesResponse\x12\x44\n\x0b\x43ommitEntry\x12\x19.replicator.CommitRequest\x1a\x1a.replicator.CommitResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -44,13 +44,13 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_APPENDENTRIESREQUEST']._serialized_start=270
   _globals['_APPENDENTRIESREQUEST']._serialized_end=376
   _globals['_APPENDENTRIESRESPONSE']._serialized_start=378
-  _globals['_APPENDENTRIESRESPONSE']._serialized_end=442
-  _globals['_COMMITREQUEST']._serialized_start=444
-  _globals['_COMMITREQUEST']._serialized_end=475
-  _globals['_COMMITRESPONSE']._serialized_start=477
-  _globals['_COMMITRESPONSE']._serialized_end=510
-  _globals['_CLIENTSERVICE']._serialized_start=513
-  _globals['_CLIENTSERVICE']._serialized_end=652
-  _globals['_REPLICATIONSERVICE']._serialized_start=655
-  _globals['_REPLICATIONSERVICE']._serialized_end=831
+  _globals['_APPENDENTRIESRESPONSE']._serialized_end=465
+  _globals['_COMMITREQUEST']._serialized_start=467
+  _globals['_COMMITREQUEST']._serialized_end=498
+  _globals['_COMMITRESPONSE']._serialized_start=500
+  _globals['_COMMITRESPONSE']._serialized_end=533
+  _globals['_CLIENTSERVICE']._serialized_start=536
+  _globals['_CLIENTSERVICE']._serialized_end=675
+  _globals['_REPLICATIONSERVICE']._serialized_start=678
+  _globals['_REPLICATIONSERVICE']._serialized_end=854
 # @@protoc_insertion_point(module_scope)
