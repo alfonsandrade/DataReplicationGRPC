@@ -12,7 +12,7 @@ class Replica(replic_pb2_grpc.ReplicationServiceServicer):
         self.port = port
         self.log = []
         self.committed_offset = 0
-        self.db = {}
+        self.db = []
         self.load_state()
 
     def load_state(self):
@@ -57,8 +57,7 @@ class Replica(replic_pb2_grpc.ReplicationServiceServicer):
     def CommitEntry(self, request, context):
         for entry in self.log:
             if entry['offset'] <= request.offset and entry['offset'] > self.committed_offset:
-                self.db[entry['key']] = entry['value']
-                self.committed_offset = entry['offset']
+                self.db.append(entry)
         self.save_db()
         return replic_pb2.CommitResponse(success=True)
 

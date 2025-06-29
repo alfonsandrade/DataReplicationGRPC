@@ -11,6 +11,7 @@ import global_vars as gv
 class Leader(replic_pb2_grpc.ClientServiceServicer):
     def __init__(self):
         self.log = []
+        self.db = []
         self.epoch = 0
         self.offset = 0
         self.lock = threading.Lock()
@@ -23,12 +24,18 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
                 if self.log:
                     self.offset = self.log[-1]['offset']
                     self.epoch = self.log[-1]['epoch']
+            with open(f"../databank/leader_db.json", "r") as f:
+                self.db = json.load(f)
         except FileNotFoundError:
             pass
 
     def save_log(self):
         with open("../databank/leader_log.json", "w") as f:
             json.dump(self.log, f, indent=4)
+
+    def save_db(self):
+        with open(f"../databank/leader_db.json", "w") as f:
+            json.dump(self.db, f, indent=4)
 
     def Write(self, request, context):
         with self.lock:
@@ -72,6 +79,9 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
                             stub.CommitEntry(replic_pb2.CommitRequest(offset=self.offset))
                     except grpc.RpcError as e:
                         print(f"Error committing to {replica_address}: {e}")
+
+                self.db.append(entry)
+                self.save_db()
                 return replic_pb2.WriteResponse(success=True, message="Data committed.")
             else:
                 return replic_pb2.WriteResponse(success=False, message="Failed to get quorum.")

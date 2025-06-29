@@ -1,4 +1,14 @@
-{
-    "2": "13333",
-    "3": "145"
-}
+[
+    {
+        "epoch": 0,
+        "offset": 9,
+        "key": "joao",
+        "value": "1"
+    },
+    {
+        "epoch": 0,
+        "offset": 10,
+        "key": "joao",
+        "value": "2"
+    }
+]
