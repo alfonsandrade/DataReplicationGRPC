@@ -6,18 +6,18 @@ import global_vars as gv
 def run():
     while True:
         command = input("Enter command (write <key> <value> or query <key>): ")
-        parts = command.split()
-        if not parts:
+        cmd_inputs = command.split()
+        if not cmd_inputs:
             continue
 
-        cmd = parts[0]
+        cmd = cmd_inputs[0]
         with grpc.insecure_channel(f'localhost:{gv.LEADER_PORT}') as channel:
             stub = replic_pb2_grpc.ClientServiceStub(channel)
-            if cmd == "write" and len(parts) == 3:
-                response = stub.Write(replic_pb2.WriteRequest(key=parts[1], value=parts[2]))
+            if cmd == "write" and len(cmd_inputs) == 3:
+                response = stub.Write(replic_pb2.WriteRequest(key=cmd_inputs[1], value=cmd_inputs[2]))
                 print(f"Leader response: {response.message}")
-            elif cmd == "query" and len(parts) == 2:
-                response = stub.Query(replic_pb2.QueryRequest(key=parts[1]))
+            elif cmd == "query" and len(cmd_inputs) == 2:
+                response = stub.Query(replic_pb2.QueryRequest(key=cmd_inputs[1]))
                 if response.found:
                     print(f"Value: {response.value}")
                 else:
