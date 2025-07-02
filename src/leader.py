@@ -127,6 +127,8 @@ class Leader(replic_pb2_grpc.ClientServiceServicer):
 
             if acks >= len(gv.REPLICA_ADDRESSES) // 2 + 1:
                 for replica_address in gv.REPLICA_ADDRESSES:
+                    if replica_address == replica_to_ignore_address:
+                        continue
                     try:
                         with grpc.insecure_channel(replica_address) as channel:
                             stub = replic_pb2_grpc.ReplicationServiceStub(channel)
